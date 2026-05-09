@@ -1,24 +1,43 @@
-import face_recognition
+from deepface import DeepFace
+import os
 
 def verify_face(agent_id, uploaded_image_path):
     try:
-        known_image_path = f"backend/known_faces/{agent_id}.jpg"
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        KNOWN_FACES_DIR = os.path.join(BASE_DIR, "known_faces")
 
-        known_image = face_recognition.load_image_file(known_image_path)
-        uploaded_image = face_recognition.load_image_file(uploaded_image_path)
+        known_face_files = [
+            f for f in os.listdir(KNOWN_FACES_DIR)
+            if f.lower().endswith(".jpg")
+        ]
 
-        known_encoding = face_recognition.face_encodings(known_image)
-        uploaded_encoding = face_recognition.face_encodings(uploaded_image)
+        if not known_face_files:
+            return {"matched": False, "confidence": 0.0}
 
-        if not known_encoding or not uploaded_encoding:
-            return False
+        best_confidence = 0.0
+        matched = False
 
-        result = face_recognition.compare_faces(
-            [known_encoding[0]],
-            uploaded_encoding[0]
-        )
+        for face_file in known_face_files:
+            known_image_path = os.path.join(KNOWN_FACES_DIR, face_file)
+            try:
+                result = DeepFace.verify(
+                    uploaded_image_path,
+                    known_image_path,
+                    enforce_detection=False
+                )
+                confidence = (1 - result["distance"]) * 100
+                if confidence > best_confidence:
+                    best_confidence = confidence
+                if result["verified"]:
+                    matched = True
+            except Exception:
+                continue
 
-        return result[0]
+        return {
+            "matched": matched,
+            "confidence": round(best_confidence, 2)
+        }
 
     except Exception as e:
-        return False
+        print("Face match error:", e)
+        return {"matched": False, "confidence": 0.0}

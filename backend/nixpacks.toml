@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ["cmake", "gcc", "libstdcxx5", "dlib"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]

@@ -1,4 +1,4 @@
 flask
 flask-cors
-face_recognition
-gunicorn 
+deepface
+gunicorn
