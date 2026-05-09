@@ -1,5 +1,5 @@
 // auth.js
-const BASE_URL = 'https://securify-production.up.railway.app';
+const BASE_URL = 'https://securify-production-aa92.up.railway.app';
 
 export async function loginUser(credentials) {
     const response = await fetch(`${BASE_URL}/login`, {
