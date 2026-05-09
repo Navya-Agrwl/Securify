@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify - Securify</title>
+    <!-- Link to style.css -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <h1>Agent Identity Verification</h1>
+<p style="margin-bottom:20px;">
+    Rapid, on-demand verification for doorstep interactions. 
+    This process verifies agent identity and authorization status 
+    without continuous tracking.
+</p>
+
+        <div class="card">
+            <h2>Upload Image for Verification</h2>
+            <form id="verifyForm">
+                <label for="agentId">Agent ID</label>
+<input type="text" id="agentId" name="agentId" placeholder="e.g. AGT102" required>
+
+<label for="agentType">Organization Type</label>
+<select id="agentType" name="agentType" required>
+    <option value="">Select Organization</option>
+    <option value="bank">Banking Agent</option>
+    <option value="delivery">Delivery Personnel</option>
+    <option value="security">Security Staff</option>
+</select>
+             <label for="image">Upload Image:</label>
+             <input type="file" id="image" name="image" accept="image/*" required>
+
+              <button type="submit">Verify</button>
+              <p style="margin-top:15px; font-size:14px; color:#555;">
+    Note: This prototype uses simulated AI face similarity and trust scoring 
+    for demonstration purposes only.
+</p>
+
+            </form>
+
+            <div id="result" style="margin-top:15px;"></div>
+        </div>
+    </div>
+
+    <!-- Load Navbar -->
+    <script type="module">
+        import { createNavbar } from '../components/navbar.js';
+        document.body.prepend(createNavbar());
+    </script>
+
+    <!-- Load Sidebar -->
+    <script type="module">
+        import { createSidebar } from '../components/sidebar.js';
+        document.body.appendChild(createSidebar());
+    </script>
+
+    <!-- Handle Verification -->
+    <script type="module">
+        import { verifyFace } from '../js/api.js';
+
+        const form = document.getElementById('verifyForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            resultDiv.textContent = 'Verifying...';
+
+            try {
+                const response = await verifyFace(formData); // Calls backend API
+                if (response.success) {
+                    resultDiv.innerHTML = `<span class="status-badge status-success">Verification Success</span>`;
+                } else {
+                    resultDiv.innerHTML = `<span class="status-badge status-fail">Verification Failed</span>`;
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = `<span class="status-badge status-fail">Error occurred</span>`;
+            }
+        });
+    </script>
+
+</body>
+</html>
