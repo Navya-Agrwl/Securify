@@ -1,11 +1,15 @@
 // api.js
+const BASE_URL = 'https://securify-production.up.railway.app';
+
 export async function getDashboardData() {
-    try {
-        const response = await fetch('http://localhost:5000/dashboard'); // replace with your backend endpoint
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        return null;
-    }
+    const response = await fetch(`${BASE_URL}/dashboard`);
+    return await response.json();
+}
+
+export async function verifyFace(formData) {
+    const response = await fetch(`${BASE_URL}/verify`, {
+        method: 'POST',
+        body: formData
+    });
+    return await response.json();
 }
