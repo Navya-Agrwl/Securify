@@ -9,6 +9,7 @@ app = Flask(__name__)
 CORS(app, origins="*")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
 RESULTS_FILE = os.path.join(BASE_DIR, "results.json")
@@ -21,6 +22,8 @@ with open(DATABASE_FILE, "r") as f:
     agents = {agent["id"]: agent for agent in agents_data}
 
 def load_users():
+    if not os.path.exists(USERS_FILE):
+        return [{"username": "admin", "password": "admin123"}]
     with open(USERS_FILE, "r") as f:
         return json.load(f)["users"]
 
@@ -29,6 +32,8 @@ def save_users(users):
         json.dump({"users": users}, f, indent=4)
 
 def load_results():
+    if not os.path.exists(RESULTS_FILE):
+        return []
     with open(RESULTS_FILE, "r") as f:
         return json.load(f)["results"]
 
